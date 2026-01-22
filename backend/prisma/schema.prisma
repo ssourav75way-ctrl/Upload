@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Rolename {
+  ADMIN
+  AUTHOR
+  USER
+}
+
+model User {
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  password           String
+  createdAt          DateTime   @default(now())
+  refreshToken       String?
+  refreshTokenExpiry DateTime?
+  role               UserRole[]
+  post               Post[]
+  files              File[]
+}
+
+model Role {
+  id    String     @id @default(uuid())
+  name  Rolename   @unique
+  users UserRole[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  assignedAt DateTime @default(now())
+
+  @@id([userId, roleId])
+}
+
+model Post {
+  id      String     @id @default(uuid())
+  title   String
+  content String
+  status  PostStatus @default(DRAFT)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  id         String   @id @default(uuid())
+  storedName String   @unique
+  path       String // path or URL to access the file (e.g. /uploads/<userId>/<storedName>)
+  uploadedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
