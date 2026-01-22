@@ -182,24 +182,4 @@ If you use PostgreSQL, set `DATABASE_URL` accordingly; for SQLite use a file pat
 
 ---
 
-## Contributing
 
-1. Fork the repo and create a feature branch.
-2. Add tests where appropriate and keep changes small and focused.
-3. Open a PR describing the change and the reason.
-
----
-
-## License
-
-MIT
-
----
-
-If you'd like, I can also:
-
-- Add a sample `.env.example` for both backend and frontend.
-- Add a `Makefile` or npm scripts wrapper for common tasks.
-- Create a small Postman collection or OpenAPI spec for the API.
-
-File created: [README.md](README.md)
