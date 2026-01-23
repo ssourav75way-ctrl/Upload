@@ -2,7 +2,7 @@ import express from "express";
 import { prisma } from "../lib/PrismaClient.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-export const authRouter = express();
+export const authRouter = express.Router();
 const generateAccessToken = (userId, roles) => {
     return jwt.sign({ userId, roles }, process.env.JWT_SECRET);
 };
@@ -16,14 +16,14 @@ authRouter.post("/signup", async (req, res) => {
             return res.status(400).json({ message: "Email and password required" });
         }
         const existingUser = await prisma.user.findUnique({
-            where: { email }
+            where: { email },
         });
         if (existingUser) {
             return res.status(409).json({ message: "User already exists" });
         }
         const passwordHash = await bcrypt.hash(password, 10);
         const userRole = await prisma.role.findFirst({
-            where: { name: "USER" }
+            where: { name: "USER" },
         });
         if (!userRole)
             throw new Error("USER role not found");
@@ -36,17 +36,17 @@ authRouter.post("/signup", async (req, res) => {
                 password: passwordHash,
                 role: {
                     create: {
-                        roleId: userRole.id
-                    }
-                }
+                        roleId: userRole.id,
+                    },
+                },
             },
             include: {
                 role: {
-                    include: { role: true }
-                }
-            }
+                    include: { role: true },
+                },
+            },
         });
-        const roles = user.role.map(r => r.role.name);
+        const roles = user.role.map((r) => r.role.name);
         const accessToken = generateAccessToken(user.id, roles);
         const refreshToken = generateRefreshToken(user.id, roles);
         await prisma.user.update({
@@ -58,14 +58,12 @@ authRouter.post("/signup", async (req, res) => {
                 refreshTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             },
         });
-        return res
-            .status(201)
-            .json({
+        return res.status(201).json({
             message: "Singup Successfull",
             id: user.id,
             accessToken: accessToken,
             refreshToken: refreshToken,
-            roles: roles
+            roles: roles,
         });
     }
     catch (error) {
@@ -83,9 +81,9 @@ authRouter.post("/login", async (req, res) => {
             where: { email },
             include: {
                 role: {
-                    include: { role: true }
-                }
-            }
+                    include: { role: true },
+                },
+            },
         });
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials" });
@@ -94,7 +92,7 @@ authRouter.post("/login", async (req, res) => {
         if (!isValid) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
-        const roles = user.role.map(r => r.role.name);
+        const roles = user.role.map((r) => r.role.name);
         const accessToken = generateAccessToken(user.id, roles);
         const refreshToken = generateRefreshToken(user.id, roles);
         await prisma.user.update({
@@ -113,8 +111,8 @@ authRouter.post("/login", async (req, res) => {
             user: {
                 id: user.id,
                 email: user.email,
-                roles
-            }
+                roles,
+            },
         });
     }
     catch (error) {

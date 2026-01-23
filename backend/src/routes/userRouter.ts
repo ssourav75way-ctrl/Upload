@@ -1,6 +1,6 @@
 import express from "express";
 
-export const userRouter = express();
+export const userRouter = express.Router();
 
 import { prisma } from "../lib/PrismaClient.js";
 import jwt from "jsonwebtoken";
@@ -9,6 +9,7 @@ import { authenticate } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/authorize.js";
 import { sendEmail } from "../email/email.js";
 import { ChangePasswordSchema } from "../types.js";
+import { sendNotificationToUser } from "../lib/notifications.js";
 
 //get the profile
 userRouter.get("/profile", authenticate, async (req, res) => {
@@ -58,8 +59,6 @@ userRouter.put("/profile", authenticate, async (req, res) => {
 
 userRouter.get("/files-db", authenticate, async (req, res) => {
   try {
-   
-    
     const userId = req.user!.userId;
 
     const user = await prisma.user.findUnique({
@@ -246,3 +245,98 @@ userRouter.post("/changePassword", authenticate, async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
+
+userRouter.post("/save-subscription", authenticate, async (req, res) => {
+  const userId = req.user?.userId;
+  const { endpoint, keys } = req.body;
+
+  if (!endpoint || !keys || !keys.p256dh || !keys.auth) {
+    return res.status(400).json({ message: "Invalid subscription data" });
+  }
+
+  try {
+    await prisma.subscription.upsert({
+      where: { endpoint },
+      create: {
+        endpoint,
+        p256dh: keys.p256dh,
+        auth: keys.auth,
+        userId: userId!,
+      },
+      update: {
+        p256dh: keys.p256dh,
+        auth: keys.auth,
+        userId: userId!,
+      },
+    });
+    return res.status(200).json({ message: "Subscription saved successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+userRouter.post("/test-notification", authenticate, async (req, res) => {
+  const userId = req.user?.userId;
+  try {
+    await sendNotificationToUser(
+      userId!,
+      "Test Notification",
+      "This is a dummy notification to test your setup!",
+    );
+    return res.status(200).json({ message: "Test notification sent" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Failed to send test notification" });
+  }
+});
+
+userRouter.post("/notify-upload-batch", authenticate, async (req, res) => {
+  console.log("POST /v1/user/notify-upload-batch hit");
+  const userId = req.user?.userId;
+  const { count, firstName } = req.body;
+  console.log("Batch info:", { count, firstName, userId });
+  try {
+    const message =
+      count > 1
+        ? `Successfully uploaded ${count} files (including ${firstName})`
+        : `File "${firstName}" uploaded successfully!`;
+
+    await sendNotificationToUser(userId!, "Upload Complete", message);
+    return res.status(200).json({ message: "Batch notification sent" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Failed to send batch notification" });
+  }
+});
+
+userRouter.post(
+  "/test-notification-delayed",
+  authenticate,
+  async (req, res) => {
+    const userId = req.user?.userId;
+
+    // Send immediate response so the user can close the tab
+    res.status(202).json({
+      message:
+        "Delayed notification scheduled (10s). You can close the tab now.",
+    });
+
+    // Wait 10 seconds and then send the notification
+    setTimeout(async () => {
+      try {
+        await sendNotificationToUser(
+          userId!,
+          "Background Alert",
+          "This notification was sent 10 seconds after your request, even if the tab was closed!",
+        );
+      } catch (error) {
+        console.error("Delayed notification error:", error);
+      }
+    }, 10000);
+  },
+);

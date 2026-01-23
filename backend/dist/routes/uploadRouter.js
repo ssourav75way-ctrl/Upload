@@ -4,7 +4,8 @@ import path from "path";
 import fs from "fs";
 import { authenticate } from "../middleware/authMiddleware.js";
 import { prisma } from "../lib/PrismaClient.js";
-export const uploadRouter = express();
+import { sendNotificationToUser } from "../lib/notifications.js";
+export const uploadRouter = express.Router();
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const userId = req.user?.userId || "public";

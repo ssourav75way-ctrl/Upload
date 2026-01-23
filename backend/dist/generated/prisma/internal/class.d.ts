@@ -9,8 +9,8 @@ export interface PrismaClientConstructor {
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Users
-   * const users = await prisma.user.findMany()
+   * // Fetch zero or more Subscriptions
+   * const subscriptions = await prisma.subscription.findMany()
    * ```
    *
    * Read more in our [docs](https://pris.ly/d/client).
@@ -26,8 +26,8 @@ export interface PrismaClientConstructor {
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Subscriptions
+ * const subscriptions = await prisma.subscription.findMany()
  * ```
  *
  * Read more in our [docs](https://pris.ly/d/client).
@@ -112,13 +112,24 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         extArgs: ExtArgs;
     }>>;
     /**
- * `prisma.user`: Exposes CRUD operations for the **User** model.
+ * `prisma.subscription`: Exposes CRUD operations for the **Subscription** model.
   * Example usage:
   * ```ts
-  * // Fetch zero or more Users
-  * const users = await prisma.user.findMany()
+  * // Fetch zero or more Subscriptions
+  * const subscriptions = await prisma.subscription.findMany()
   * ```
   */
+    get subscription(): Prisma.SubscriptionDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
+     * `prisma.user`: Exposes CRUD operations for the **User** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more Users
+      * const users = await prisma.user.findMany()
+      * ```
+      */
     get user(): Prisma.UserDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;

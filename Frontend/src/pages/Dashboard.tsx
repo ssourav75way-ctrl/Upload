@@ -34,12 +34,11 @@ import {
   MoreVertical,
   Trash2,
   FileText,
-
   LayoutGrid,
   List as ListIcon,
   HardDrive,
- 
   Plus,
+  Bell,
 } from "lucide-react";
 import UploadDrawer from "@/components/UploadDrawer";
 
@@ -64,17 +63,29 @@ export default function Dashboard() {
           url: f.url,
         }));
         if (serverFiles.length) dispatch(setFiles(serverFiles));
-      } catch (e) {
-      }
+      } catch (e) {}
     })();
   }, [dispatch]);
 
   const [view, setView] = useState<"grid" | "list">("grid");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [accountAnchorEl, setAccountAnchorEl] = useState<null | HTMLElement>(null);
+  const [accountAnchorEl, setAccountAnchorEl] = useState<null | HTMLElement>(
+    null,
+  );
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
-  const [selectedOption, setSelectedOption] = useState<{ value: string; label: string } | null>(null);
+  const [selectedOption, setSelectedOption] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [notiPermission, setNotiPermission] =
+    useState<NotificationPermission>("default");
+
+  useEffect(() => {
+    if ("Notification" in window) {
+      setNotiPermission(Notification.permission);
+    }
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -83,15 +94,43 @@ export default function Dashboard() {
     setAccountAnchorEl(null);
   };
 
+  const handleTestNotification = async () => {
+    try {
+      await api.post("/v1/user/test-notification");
+      enqueueSnackbar("Test notification request sent", { variant: "success" });
+    } catch (e) {
+      enqueueSnackbar("Failed to send test notification", { variant: "error" });
+    }
+  };
+
+  const handleTestDelayedNotification = async () => {
+    try {
+      await api.post("/v1/user/test-notification-delayed");
+      enqueueSnackbar("Delayed notification scheduled! Close the tab now.", {
+        variant: "info",
+        autoHideDuration: 10000,
+      });
+    } catch (e) {
+      enqueueSnackbar("Failed to schedule delayed notification", {
+        variant: "error",
+      });
+    }
+  };
+
   const handleFiles = async (uploadedFiles: FileList | null) => {
     if (!uploadedFiles) return;
 
-    await Promise.all(
+    const results = await Promise.all(
       Array.from(uploadedFiles).map(async (file) => {
         const uploadId = Math.random().toString(36).substring(7);
 
         dispatch(
-          addUpload({ id: uploadId, name: file.name, progress: 0, status: "uploading" }),
+          addUpload({
+            id: uploadId,
+            name: file.name,
+            progress: 0,
+            status: "uploading",
+          }),
         );
 
         const form = new FormData();
@@ -104,7 +143,9 @@ export default function Dashboard() {
               const total = progressEvent?.total ?? 0;
               if (total > 0) {
                 const percent = Math.round((loaded / total) * 100);
-                dispatch(updateUploadProgress({ id: uploadId, progress: percent }));
+                dispatch(
+                  updateUploadProgress({ id: uploadId, progress: percent }),
+                );
               }
             },
           });
@@ -119,20 +160,67 @@ export default function Dashboard() {
             url: data.url,
           };
 
-          dispatch(updateUploadProgress({ id: uploadId, progress: 100, status: "completed" }));
+          dispatch(
+            updateUploadProgress({
+              id: uploadId,
+              progress: 100,
+              status: "completed",
+            }),
+          );
           dispatch(addFiles([newFile]));
-          enqueueSnackbar(`${file.name} uploaded successfully`, { variant: "success" });
+          return { success: true, name: file.name };
         } catch (e) {
-          dispatch(updateUploadProgress({ id: uploadId, progress: 0, status: "error" }));
-          enqueueSnackbar(`Failed to upload ${file.name}`, { variant: "error" });
+          dispatch(
+            updateUploadProgress({
+              id: uploadId,
+              progress: 0,
+              status: "error",
+            }),
+          );
+          return { success: false, name: file.name };
         }
       }),
     );
 
+    const successful = results.filter((r) => r.success);
+    if (successful.length > 0) {
+      const msg =
+        successful.length > 1
+          ? `Successfully uploaded ${successful.length} files`
+          : `File "${successful[0].name}" uploaded successfully`;
+      enqueueSnackbar(msg, { variant: "success" });
+
+      try {
+        await api.post(
+          "/v1/user/notify-upload-batch",
+          {
+            count: successful.length,
+            firstName: successful[0].name,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          },
+        );
+      } catch (err) {
+        console.error("Batch notify error:", err);
+      }
+    }
+
+    const failed = results.filter((r) => !r.success);
+    if (failed.length > 0) {
+      enqueueSnackbar(`Failed to upload ${failed.length} file(s)`, {
+        variant: "error",
+      });
+    }
+
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     await handleFiles(event.target.files);
   };
 
@@ -178,7 +266,6 @@ export default function Dashboard() {
         handleFiles(e.dataTransfer.files);
       }}
     >
-      
       <Box
         sx={{
           width: 260,
@@ -239,6 +326,7 @@ export default function Dashboard() {
             bgcolor: "rgba(99, 102, 241, 0.08)",
             borderRadius: 2,
             p: 1.5,
+            mb: 1,
             "&:hover": {
               bgcolor: "rgba(99, 102, 241, 0.12)",
             },
@@ -246,10 +334,65 @@ export default function Dashboard() {
         >
           My Drive
         </Button>
+
+        <Button
+          startIcon={<Bell size={20} />}
+          fullWidth
+          onClick={handleTestNotification}
+          sx={{
+            justifyContent: "flex-start",
+            textTransform: "none",
+            color:
+              notiPermission === "granted" ? "text.secondary" : "error.main",
+            borderRadius: 2,
+            p: 1.5,
+            "&:hover": {
+              bgcolor: "action.hover",
+              color: "primary.main",
+            },
+          }}
+        >
+          {notiPermission === "granted"
+            ? "Test OS Notification"
+            : "Fix Permissions"}
+        </Button>
+
+        {notiPermission === "granted" && (
+          <Button
+            startIcon={<Bell size={20} />}
+            fullWidth
+            onClick={handleTestDelayedNotification}
+            sx={{
+              justifyContent: "flex-start",
+              textTransform: "none",
+              color: "text.secondary",
+              borderRadius: 2,
+              p: 1.5,
+              mt: 1,
+              "&:hover": {
+                bgcolor: "action.hover",
+                color: "primary.main",
+              },
+            }}
+          >
+            Test Background Alert (10s)
+          </Button>
+        )}
+
+        {notiPermission !== "granted" && (
+          <Typography
+            variant="caption"
+            color="error"
+            sx={{ px: 2, mt: 1, display: "block" }}
+          >
+            {notiPermission === "denied"
+              ? "Notifications blocked by browser. Reset in address bar."
+              : "Notification permission required for OS alerts."}
+          </Typography>
+        )}
       </Box>
 
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-        
         <Box
           sx={{
             p: 2,
@@ -345,14 +488,30 @@ export default function Dashboard() {
               </IconButton>
             </Box>
             <Box>
-              <IconButton onClick={(e) => setAccountAnchorEl(e.currentTarget)} size="small" sx={{ p: 0.5 }}>
-                <Avatar sx={{ width: 32, height: 32, bgcolor: "primary.main", cursor: "pointer" }}>U</Avatar>
+              <IconButton
+                onClick={(e) => setAccountAnchorEl(e.currentTarget)}
+                size="small"
+                sx={{ p: 0.5 }}
+              >
+                <Avatar
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    bgcolor: "primary.main",
+                    cursor: "pointer",
+                  }}
+                >
+                  U
+                </Avatar>
               </IconButton>
               <Menu
                 anchorEl={accountAnchorEl}
                 open={Boolean(accountAnchorEl)}
                 onClose={() => setAccountAnchorEl(null)}
-                PaperProps={{ elevation: 2, sx: { borderRadius: 2, minWidth: 160 } }}
+                PaperProps={{
+                  elevation: 2,
+                  sx: { borderRadius: 2, minWidth: 160 },
+                }}
               >
                 <MenuItem
                   onClick={() => {
@@ -363,7 +522,14 @@ export default function Dashboard() {
                 >
                   Profile
                 </MenuItem>
-                <MenuItem onClick={handleLogout} sx={{ color: "error.main", fontSize: "0.95rem", fontWeight: 500 }}>
+                <MenuItem
+                  onClick={handleLogout}
+                  sx={{
+                    color: "error.main",
+                    fontSize: "0.95rem",
+                    fontWeight: 500,
+                  }}
+                >
                   Logout
                 </MenuItem>
               </Menu>
@@ -422,83 +588,164 @@ export default function Dashboard() {
                 Upload File
               </Button>
             </Box>
-          ) : (() => {
-            const filteredFiles = selectedOption
-              ? files.filter((file) => file.id === selectedOption.value)
-              : files;
+          ) : (
+            (() => {
+              const filteredFiles = selectedOption
+                ? files.filter((file) => file.id === selectedOption.value)
+                : files;
 
-            if (filteredFiles.length === 0) {
-              return (
-                <Box
-                  sx={{
-                    height: "60vh",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "text.secondary",
-                    gap: 2,
-                  }}
-                >
-                  <FileText size={48} />
-                  <Typography variant="h6">No files found</Typography>
-                  <Typography variant="body2">
-                    Try searching with different keywords
-                  </Typography>
-                </Box>
-              );
-            }
-
-            return view === "grid" ? (
-              <Grid container spacing={3}>
-                {filteredFiles.map((file) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={file.id}>
-                  <Paper
-                    elevation={0}
+              if (filteredFiles.length === 0) {
+                return (
+                  <Box
                     sx={{
-                      p: 2,
-                      borderRadius: 3,
-                      border: "1px solid",
-                      borderColor: "divider",
-                      "&:hover": { borderColor: "primary.main", boxShadow: 1 },
-                      position: "relative",
-                      transition: "all 0.2s",
+                      height: "60vh",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "text.secondary",
+                      gap: 2,
                     }}
                   >
-                    <Box
-                      sx={{
-                        height: 120,
-                        bgcolor: "#f8fafc",
-                        borderRadius: 2,
-                        mb: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "primary.main",
-                      }}
-                    >
-                      <FileText size={48} />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "start",
-                      }}
-                    >
-                      <Box sx={{ overflow: "hidden" }}>
-                        <Typography
-                          variant="subtitle2"
-                          noWrap
-                          fontWeight="bold"
+                    <FileText size={48} />
+                    <Typography variant="h6">No files found</Typography>
+                    <Typography variant="body2">
+                      Try searching with different keywords
+                    </Typography>
+                  </Box>
+                );
+              }
+
+              return view === "grid" ? (
+                <Grid container spacing={3}>
+                  {filteredFiles.map((file) => (
+                    <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={file.id}>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          p: 2,
+                          borderRadius: 3,
+                          border: "1px solid",
+                          borderColor: "divider",
+                          "&:hover": {
+                            borderColor: "primary.main",
+                            boxShadow: 1,
+                          },
+                          position: "relative",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            height: 120,
+                            bgcolor: "#f8fafc",
+                            borderRadius: 2,
+                            mb: 2,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "primary.main",
+                          }}
                         >
+                          <FileText size={48} />
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "start",
+                          }}
+                        >
+                          <Box sx={{ overflow: "hidden" }}>
+                            <Typography
+                              variant="subtitle2"
+                              noWrap
+                              fontWeight="bold"
+                            >
+                              {file.name}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              {formatSize(file.size)} •{" "}
+                              {new Date(file.uploadedAt).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                          <IconButton
+                            size="small"
+                            onClick={(e) => handleMenuOpen(e, file)}
+                          >
+                            <MoreVertical size={16} />
+                          </IconButton>
+                        </Box>
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 120px 120px 48px",
+                      p: 2,
+                      borderBottom: "1px solid",
+                      borderColor: "divider",
+                      color: "text.secondary",
+                    }}
+                  >
+                    <Typography variant="caption" fontWeight="bold">
+                      NAME
+                    </Typography>
+                    <Typography variant="caption" fontWeight="bold">
+                      SIZE
+                    </Typography>
+                    <Typography variant="caption" fontWeight="bold">
+                      UPLOADED
+                    </Typography>
+                    <Box />
+                  </Box>
+                  {filteredFiles.map((file) => (
+                    <Box
+                      key={file.id}
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 120px 120px 48px",
+                        p: 2,
+                        alignItems: "center",
+                        borderBottom: "1px solid",
+                        borderColor: "divider",
+                        "&:hover": { bgcolor: "action.hover" },
+                        "&:last-child": { borderBottom: 0 },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                          overflow: "hidden",
+                        }}
+                      >
+                        <FileText size={20} color="#6366f1" />
+                        <Typography variant="body2" noWrap fontWeight="medium">
                           {file.name}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {formatSize(file.size)} •{" "}
-                          {new Date(file.uploadedAt).toLocaleDateString()}
-                        </Typography>
                       </Box>
+                      <Typography variant="body2" color="text.secondary">
+                        {formatSize(file.size)}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {new Date(file.uploadedAt).toLocaleDateString()}
+                      </Typography>
                       <IconButton
                         size="small"
                         onClick={(e) => handleMenuOpen(e, file)}
@@ -506,84 +753,11 @@ export default function Dashboard() {
                         <MoreVertical size={16} />
                       </IconButton>
                     </Box>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
-            <Paper
-              elevation={0}
-              sx={{
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2,
-              }}
-            >
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 120px 120px 48px",
-                  p: 2,
-                  borderBottom: "1px solid",
-                  borderColor: "divider",
-                  color: "text.secondary",
-                }}
-              >
-                <Typography variant="caption" fontWeight="bold">
-                  NAME
-                </Typography>
-                <Typography variant="caption" fontWeight="bold">
-                  SIZE
-                </Typography>
-                <Typography variant="caption" fontWeight="bold">
-                  UPLOADED
-                </Typography>
-                <Box />
-              </Box>
-              {filteredFiles.map((file) => (
-                <Box
-                  key={file.id}
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 120px 120px 48px",
-                    p: 2,
-                    alignItems: "center",
-                    borderBottom: "1px solid",
-                    borderColor: "divider",
-                    "&:hover": { bgcolor: "action.hover" },
-                    "&:last-child": { borderBottom: 0 },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      overflow: "hidden",
-                    }}
-                  >
-                    <FileText size={20} color="#6366f1" />
-                    <Typography variant="body2" noWrap fontWeight="medium">
-                      {file.name}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {formatSize(file.size)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {new Date(file.uploadedAt).toLocaleDateString()}
-                  </Typography>
-                  <IconButton
-                    size="small"
-                    onClick={(e) => handleMenuOpen(e, file)}
-                  >
-                    <MoreVertical size={16} />
-                  </IconButton>
-                </Box>
-              ))}
-            </Paper>
-            );
-          })()}
+                  ))}
+                </Paper>
+              );
+            })()
+          )}
         </Box>
       </Box>
 
@@ -601,8 +775,15 @@ export default function Dashboard() {
             pointerEvents: "none",
           }}
         >
-          <Paper elevation={0} sx={{ p: 4, borderRadius: 2, bgcolor: "transparent" }}>
-            <Typography variant="h6" fontWeight="bold" sx={{ color: "primary.main" }}>
+          <Paper
+            elevation={0}
+            sx={{ p: 4, borderRadius: 2, bgcolor: "transparent" }}
+          >
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              sx={{ color: "primary.main" }}
+            >
               Drop files to upload
             </Typography>
           </Paper>

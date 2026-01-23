@@ -1,22 +1,19 @@
-import express from "express"
-import {prisma} from "../lib/PrismaClient.js"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
+import express from "express";
+import { prisma } from "../lib/PrismaClient.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import type { Role } from "../generated/prisma/client.js";
 
+export const authRouter = express.Router();
 
+const generateAccessToken = (userId: String, roles: string[]) => {
+  return jwt.sign({ userId, roles }, process.env.JWT_SECRET!);
+};
+const generateRefreshToken = (userId: string, roles: string[]) => {
+  return jwt.sign({ userId, roles }, process.env.REFRESH_TOKEN!);
+};
 
-export const authRouter=express();
-
-
-const generateAccessToken=(userId:String, roles:string[])=>{
-      return jwt.sign({ userId, roles }, process.env.JWT_SECRET!);
-}
-const generateRefreshToken=(userId:string, roles:string[])=>{
-      return jwt.sign({ userId , roles }, process.env.REFRESH_TOKEN!);
-}
-
-authRouter.post("/signup",async (req, res) => {
+authRouter.post("/signup", async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -25,7 +22,7 @@ authRouter.post("/signup",async (req, res) => {
     }
 
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (existingUser) {
@@ -34,11 +31,10 @@ authRouter.post("/signup",async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-  const userRole = await prisma.role.findFirst({
-  where: { name: "USER" }
-});
-if (!userRole) throw new Error("USER role not found");
-
+    const userRole = await prisma.role.findFirst({
+      where: { name: "USER" },
+    });
+    if (!userRole) throw new Error("USER role not found");
 
     if (!userRole) {
       return res.status(500).json({ message: "USER role not found" });
@@ -47,23 +43,23 @@ if (!userRole) throw new Error("USER role not found");
     const user = await prisma.user.create({
       data: {
         email,
-    
-        password:passwordHash,
+
+        password: passwordHash,
         role: {
           create: {
-            roleId: userRole.id
-          }
-        }
+            roleId: userRole.id,
+          },
+        },
       },
       include: {
         role: {
-          include: { role: true }
-        }
-      }
+          include: { role: true },
+        },
+      },
     });
-    const roles = user.role.map(r => r.role.name) 
-    const accessToken=generateAccessToken(user.id, roles)
-    const refreshToken=generateRefreshToken(user.id, roles)
+    const roles = user.role.map((r) => r.role.name);
+    const accessToken = generateAccessToken(user.id, roles);
+    const refreshToken = generateRefreshToken(user.id, roles);
     await prisma.user.update({
       where: {
         id: user.id,
@@ -73,26 +69,19 @@ if (!userRole) throw new Error("USER role not found");
         refreshTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
-   
-    return res
-      .status(201)
-      .json({
-        message:"Singup Successfull", 
-        id: user.id,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        roles:roles
-      });
 
-  
-
-   
+    return res.status(201).json({
+      message: "Singup Successfull",
+      id: user.id,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      roles: roles,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Signup failed" });
   }
 });
-
 
 authRouter.post("/login", async (req, res) => {
   try {
@@ -106,9 +95,9 @@ authRouter.post("/login", async (req, res) => {
       where: { email },
       include: {
         role: {
-          include: { role: true }
-        }
-      }
+          include: { role: true },
+        },
+      },
     });
 
     if (!user) {
@@ -121,9 +110,9 @@ authRouter.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const roles = user.role.map(r => r.role.name);
-    const accessToken=generateAccessToken(user.id, roles)
-    const refreshToken=generateRefreshToken(user.id, roles)
+    const roles = user.role.map((r) => r.role.name);
+    const accessToken = generateAccessToken(user.id, roles);
+    const refreshToken = generateRefreshToken(user.id, roles);
     await prisma.user.update({
       where: {
         id: user.id,
@@ -134,8 +123,6 @@ authRouter.post("/login", async (req, res) => {
       },
     });
 
-
-
     res.json({
       message: "Login successful",
       accessToken,
@@ -143,10 +130,9 @@ authRouter.post("/login", async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        roles
-      }
+        roles,
+      },
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Login failed" });

@@ -26,6 +26,7 @@ export declare const JsonNull: import("@prisma/client-runtime-utils").JsonNullCl
  */
 export declare const AnyNull: import("@prisma/client-runtime-utils").AnyNullClass;
 export declare const ModelName: {
+    readonly Subscription: "Subscription";
     readonly User: "User";
     readonly Role: "Role";
     readonly UserRole: "UserRole";
@@ -40,6 +41,14 @@ export declare const TransactionIsolationLevel: {
     readonly Serializable: "Serializable";
 };
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel];
+export declare const SubscriptionScalarFieldEnum: {
+    readonly id: "id";
+    readonly endpoint: "endpoint";
+    readonly p256dh: "p256dh";
+    readonly auth: "auth";
+    readonly userId: "userId";
+};
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum];
 export declare const UserScalarFieldEnum: {
     readonly id: "id";
     readonly email: "email";

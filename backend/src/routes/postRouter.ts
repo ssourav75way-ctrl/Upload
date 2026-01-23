@@ -4,7 +4,7 @@ import { PostStatus } from "../generated/prisma/enums.js";
 import { authenticate } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/authorize.js";
 
-export const postRouter = express();
+export const postRouter = express.Router();
 
 // Get all published posts (public)
 postRouter.get("/", async (req, res) => {

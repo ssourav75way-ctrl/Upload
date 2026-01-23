@@ -2,7 +2,7 @@ import express from "express";
 import { prisma } from "../lib/PrismaClient.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-export const authorRouter = express();
+export const authorRouter = express.Router();
 const generateAccessToken = (userId, roles) => {
     return jwt.sign({ userId, roles }, process.env.JWT_SECRET);
 };

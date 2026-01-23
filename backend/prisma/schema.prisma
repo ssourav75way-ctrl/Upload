@@ -13,16 +13,26 @@ enum Rolename {
   USER
 }
 
+model Subscription {
+  id       String @id @default(uuid())
+  endpoint String @unique
+  p256dh   String
+  auth     String
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model User {
-  id                 String     @id @default(uuid())
-  email              String     @unique
+  id                 String         @id @default(uuid())
+  email              String         @unique
   password           String
-  createdAt          DateTime   @default(now())
+  createdAt          DateTime       @default(now())
   refreshToken       String?
   refreshTokenExpiry DateTime?
   role               UserRole[]
   post               Post[]
   files              File[]
+  subscriptions      Subscription[]
 }
 
 model Role {

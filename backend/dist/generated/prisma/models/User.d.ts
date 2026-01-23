@@ -149,6 +149,7 @@ export type UserWhereInput = {
     role?: Prisma.UserRoleListRelationFilter;
     post?: Prisma.PostListRelationFilter;
     files?: Prisma.FileListRelationFilter;
+    subscriptions?: Prisma.SubscriptionListRelationFilter;
 };
 export type UserOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -160,6 +161,7 @@ export type UserOrderByWithRelationInput = {
     role?: Prisma.UserRoleOrderByRelationAggregateInput;
     post?: Prisma.PostOrderByRelationAggregateInput;
     files?: Prisma.FileOrderByRelationAggregateInput;
+    subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput;
 };
 export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -174,6 +176,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
     role?: Prisma.UserRoleListRelationFilter;
     post?: Prisma.PostListRelationFilter;
     files?: Prisma.FileListRelationFilter;
+    subscriptions?: Prisma.SubscriptionListRelationFilter;
 }, "id" | "email">;
 export type UserOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -207,6 +210,7 @@ export type UserCreateInput = {
     role?: Prisma.UserRoleCreateNestedManyWithoutUserInput;
     post?: Prisma.PostCreateNestedManyWithoutAuthorInput;
     files?: Prisma.FileCreateNestedManyWithoutUserInput;
+    subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput;
 };
 export type UserUncheckedCreateInput = {
     id?: string;
@@ -218,6 +222,7 @@ export type UserUncheckedCreateInput = {
     role?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput;
     post?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput;
     files?: Prisma.FileUncheckedCreateNestedManyWithoutUserInput;
+    subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput;
 };
 export type UserUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -229,6 +234,7 @@ export type UserUpdateInput = {
     role?: Prisma.UserRoleUpdateManyWithoutUserNestedInput;
     post?: Prisma.PostUpdateManyWithoutAuthorNestedInput;
     files?: Prisma.FileUpdateManyWithoutUserNestedInput;
+    subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput;
 };
 export type UserUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -240,6 +246,7 @@ export type UserUncheckedUpdateInput = {
     role?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput;
     post?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput;
     files?: Prisma.FileUncheckedUpdateManyWithoutUserNestedInput;
+    subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput;
 };
 export type UserCreateManyInput = {
     id?: string;
@@ -265,6 +272,10 @@ export type UserUncheckedUpdateManyInput = {
     refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
 };
+export type UserScalarRelationFilter = {
+    is?: Prisma.UserWhereInput;
+    isNot?: Prisma.UserWhereInput;
+};
 export type UserCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     email?: Prisma.SortOrder;
@@ -289,12 +300,17 @@ export type UserMinOrderByAggregateInput = {
     refreshToken?: Prisma.SortOrder;
     refreshTokenExpiry?: Prisma.SortOrder;
 };
-export type UserScalarRelationFilter = {
-    is?: Prisma.UserWhereInput;
-    isNot?: Prisma.UserWhereInput;
+export type UserCreateNestedOneWithoutSubscriptionsInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionsInput;
+    connect?: Prisma.UserWhereUniqueInput;
 };
-export type StringFieldUpdateOperationsInput = {
-    set?: string;
+export type UserUpdateOneRequiredWithoutSubscriptionsNestedInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionsInput;
+    upsert?: Prisma.UserUpsertWithoutSubscriptionsInput;
+    connect?: Prisma.UserWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.UserUpdateWithoutSubscriptionsInput>, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>;
 };
 export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string;
@@ -341,6 +357,63 @@ export type UserUpdateOneRequiredWithoutFilesNestedInput = {
     connect?: Prisma.UserWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFilesInput, Prisma.UserUpdateWithoutFilesInput>, Prisma.UserUncheckedUpdateWithoutFilesInput>;
 };
+export type UserCreateWithoutSubscriptionsInput = {
+    id?: string;
+    email: string;
+    password: string;
+    createdAt?: Date | string;
+    refreshToken?: string | null;
+    refreshTokenExpiry?: Date | string | null;
+    role?: Prisma.UserRoleCreateNestedManyWithoutUserInput;
+    post?: Prisma.PostCreateNestedManyWithoutAuthorInput;
+    files?: Prisma.FileCreateNestedManyWithoutUserInput;
+};
+export type UserUncheckedCreateWithoutSubscriptionsInput = {
+    id?: string;
+    email: string;
+    password: string;
+    createdAt?: Date | string;
+    refreshToken?: string | null;
+    refreshTokenExpiry?: Date | string | null;
+    role?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput;
+    post?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput;
+    files?: Prisma.FileUncheckedCreateNestedManyWithoutUserInput;
+};
+export type UserCreateOrConnectWithoutSubscriptionsInput = {
+    where: Prisma.UserWhereUniqueInput;
+    create: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>;
+};
+export type UserUpsertWithoutSubscriptionsInput = {
+    update: Prisma.XOR<Prisma.UserUpdateWithoutSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>;
+    create: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>;
+    where?: Prisma.UserWhereInput;
+};
+export type UserUpdateToOneWithWhereWithoutSubscriptionsInput = {
+    where?: Prisma.UserWhereInput;
+    data: Prisma.XOR<Prisma.UserUpdateWithoutSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>;
+};
+export type UserUpdateWithoutSubscriptionsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    password?: Prisma.StringFieldUpdateOperationsInput | string;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    role?: Prisma.UserRoleUpdateManyWithoutUserNestedInput;
+    post?: Prisma.PostUpdateManyWithoutAuthorNestedInput;
+    files?: Prisma.FileUpdateManyWithoutUserNestedInput;
+};
+export type UserUncheckedUpdateWithoutSubscriptionsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    password?: Prisma.StringFieldUpdateOperationsInput | string;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    refreshToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    role?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput;
+    post?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput;
+    files?: Prisma.FileUncheckedUpdateManyWithoutUserNestedInput;
+};
 export type UserCreateWithoutRoleInput = {
     id?: string;
     email: string;
@@ -350,6 +423,7 @@ export type UserCreateWithoutRoleInput = {
     refreshTokenExpiry?: Date | string | null;
     post?: Prisma.PostCreateNestedManyWithoutAuthorInput;
     files?: Prisma.FileCreateNestedManyWithoutUserInput;
+    subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput;
 };
 export type UserUncheckedCreateWithoutRoleInput = {
     id?: string;
@@ -360,6 +434,7 @@ export type UserUncheckedCreateWithoutRoleInput = {
     refreshTokenExpiry?: Date | string | null;
     post?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput;
     files?: Prisma.FileUncheckedCreateNestedManyWithoutUserInput;
+    subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput;
 };
 export type UserCreateOrConnectWithoutRoleInput = {
     where: Prisma.UserWhereUniqueInput;
@@ -383,6 +458,7 @@ export type UserUpdateWithoutRoleInput = {
     refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     post?: Prisma.PostUpdateManyWithoutAuthorNestedInput;
     files?: Prisma.FileUpdateManyWithoutUserNestedInput;
+    subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput;
 };
 export type UserUncheckedUpdateWithoutRoleInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -393,6 +469,7 @@ export type UserUncheckedUpdateWithoutRoleInput = {
     refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     post?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput;
     files?: Prisma.FileUncheckedUpdateManyWithoutUserNestedInput;
+    subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput;
 };
 export type UserCreateWithoutPostInput = {
     id?: string;
@@ -403,6 +480,7 @@ export type UserCreateWithoutPostInput = {
     refreshTokenExpiry?: Date | string | null;
     role?: Prisma.UserRoleCreateNestedManyWithoutUserInput;
     files?: Prisma.FileCreateNestedManyWithoutUserInput;
+    subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput;
 };
 export type UserUncheckedCreateWithoutPostInput = {
     id?: string;
@@ -413,6 +491,7 @@ export type UserUncheckedCreateWithoutPostInput = {
     refreshTokenExpiry?: Date | string | null;
     role?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput;
     files?: Prisma.FileUncheckedCreateNestedManyWithoutUserInput;
+    subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput;
 };
 export type UserCreateOrConnectWithoutPostInput = {
     where: Prisma.UserWhereUniqueInput;
@@ -436,6 +515,7 @@ export type UserUpdateWithoutPostInput = {
     refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     role?: Prisma.UserRoleUpdateManyWithoutUserNestedInput;
     files?: Prisma.FileUpdateManyWithoutUserNestedInput;
+    subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput;
 };
 export type UserUncheckedUpdateWithoutPostInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -446,6 +526,7 @@ export type UserUncheckedUpdateWithoutPostInput = {
     refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     role?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput;
     files?: Prisma.FileUncheckedUpdateManyWithoutUserNestedInput;
+    subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput;
 };
 export type UserCreateWithoutFilesInput = {
     id?: string;
@@ -456,6 +537,7 @@ export type UserCreateWithoutFilesInput = {
     refreshTokenExpiry?: Date | string | null;
     role?: Prisma.UserRoleCreateNestedManyWithoutUserInput;
     post?: Prisma.PostCreateNestedManyWithoutAuthorInput;
+    subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput;
 };
 export type UserUncheckedCreateWithoutFilesInput = {
     id?: string;
@@ -466,6 +548,7 @@ export type UserUncheckedCreateWithoutFilesInput = {
     refreshTokenExpiry?: Date | string | null;
     role?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput;
     post?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput;
+    subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput;
 };
 export type UserCreateOrConnectWithoutFilesInput = {
     where: Prisma.UserWhereUniqueInput;
@@ -489,6 +572,7 @@ export type UserUpdateWithoutFilesInput = {
     refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     role?: Prisma.UserRoleUpdateManyWithoutUserNestedInput;
     post?: Prisma.PostUpdateManyWithoutAuthorNestedInput;
+    subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput;
 };
 export type UserUncheckedUpdateWithoutFilesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -499,6 +583,7 @@ export type UserUncheckedUpdateWithoutFilesInput = {
     refreshTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     role?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput;
     post?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput;
+    subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput;
 };
 /**
  * Count Type UserCountOutputType
@@ -507,11 +592,13 @@ export type UserCountOutputType = {
     role: number;
     post: number;
     files: number;
+    subscriptions: number;
 };
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     role?: boolean | UserCountOutputTypeCountRoleArgs;
     post?: boolean | UserCountOutputTypeCountPostArgs;
     files?: boolean | UserCountOutputTypeCountFilesArgs;
+    subscriptions?: boolean | UserCountOutputTypeCountSubscriptionsArgs;
 };
 /**
  * UserCountOutputType without action
@@ -540,6 +627,12 @@ export type UserCountOutputTypeCountPostArgs<ExtArgs extends runtime.Types.Exten
 export type UserCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.FileWhereInput;
 };
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.SubscriptionWhereInput;
+};
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     email?: boolean;
@@ -550,6 +643,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     role?: boolean | Prisma.User$roleArgs<ExtArgs>;
     post?: boolean | Prisma.User$postArgs<ExtArgs>;
     files?: boolean | Prisma.User$filesArgs<ExtArgs>;
+    subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["user"]>;
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -581,6 +675,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     role?: boolean | Prisma.User$roleArgs<ExtArgs>;
     post?: boolean | Prisma.User$postArgs<ExtArgs>;
     files?: boolean | Prisma.User$filesArgs<ExtArgs>;
+    subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
@@ -591,6 +686,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         role: Prisma.$UserRolePayload<ExtArgs>[];
         post: Prisma.$PostPayload<ExtArgs>[];
         files: Prisma.$FilePayload<ExtArgs>[];
+        subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -931,6 +1027,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
     role<T extends Prisma.User$roleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$roleArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     post<T extends Prisma.User$postArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$postArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     files<T extends Prisma.User$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1400,6 +1497,29 @@ export type User$filesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
     take?: number;
     skip?: number;
     distinct?: Prisma.FileScalarFieldEnum | Prisma.FileScalarFieldEnum[];
+};
+/**
+ * User.subscriptions
+ */
+export type User$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Subscription
+     */
+    select?: Prisma.SubscriptionSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Subscription
+     */
+    omit?: Prisma.SubscriptionOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.SubscriptionInclude<ExtArgs> | null;
+    where?: Prisma.SubscriptionWhereInput;
+    orderBy?: Prisma.SubscriptionOrderByWithRelationInput | Prisma.SubscriptionOrderByWithRelationInput[];
+    cursor?: Prisma.SubscriptionWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[];
 };
 /**
  * User without action

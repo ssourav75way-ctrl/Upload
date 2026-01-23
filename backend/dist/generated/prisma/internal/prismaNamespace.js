@@ -68,6 +68,7 @@ export const JsonNull = runtime.JsonNull;
  */
 export const AnyNull = runtime.AnyNull;
 export const ModelName = {
+    Subscription: 'Subscription',
     User: 'User',
     Role: 'Role',
     UserRole: 'UserRole',
@@ -83,6 +84,13 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
     RepeatableRead: 'RepeatableRead',
     Serializable: 'Serializable'
 });
+export const SubscriptionScalarFieldEnum = {
+    id: 'id',
+    endpoint: 'endpoint',
+    p256dh: 'p256dh',
+    auth: 'auth',
+    userId: 'userId'
+};
 export const UserScalarFieldEnum = {
     id: 'id',
     email: 'email',

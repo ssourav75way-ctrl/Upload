@@ -1,185 +1,169 @@
-# CloudDrive (Upload Service)
+# CloudDrive - Full-Stack File Management with OS Push Notifications
 
->A small full-stack file upload manager built with a TypeScript Node/Express backend (Prisma for DB + local disk for file storage) and a Vite + React frontend. Includes authentication, file upload endpoints, and a simple UI for managing files.
+**CloudDrive** is a high-performance full-stack application designed for seamless file storage and real-time management. It features a robust TypeScript Node/Express backend powered by Prisma and a modern, reactive Vite + React frontend.
 
----
-
-## Key Features
-- User authentication (JWT)
-- File upload with progress reporting
-- Files stored on disk (backend/uploads) and referenced in the database (Prisma)
-- Simple React + MUI frontend with grid/list views, search, and upload drawer
+The standout feature of this project is its **OS-Level Push Notification System**, which delivers background alerts and summarize batch actions (like multiple file uploads) into single, clean system notifications even when the browser tab is closed.
 
 ---
 
-## Repository layout
+## 🚀 Key Features
 
-- `backend/` — Express + TypeScript API, Prisma models and migrations, upload routes
-- `Frontend/` — Vite + React (TypeScript) frontend application
+### 📂 File Management
 
-Detailed notable files:
-- `backend/src/index.ts` — server entry (listens on port 3000)
-- `backend/prisma/schema.prisma` — DB schema and models
-- `backend/src/routes/uploadRouter.ts` — upload endpoints (POST /v1/upload, DELETE /v1/upload/:id, etc.)
-- `Frontend/src/pages/Dashboard.tsx` — main UX for file listing + upload
-- `Frontend/src/services/api.ts` — Axios instance, reads `VITE_API_URL`.
+- **Multipart Uploads**: Individual and batch file uploads with real-time progress tracking.
+- **Ownership Tracking**: Files are stored on disk and strictly mapped to users via Prisma.
+- **Summary Notifications**: Intelligently aggregates multiple file uploads into a single OS notification.
+
+### 🔔 Real-time Notifications (OS-Level)
+
+- **Native OS Alerts**: Uses Web Push API and Service Workers to trigger native Mac/Windows notifications.
+- **Background Support**: Receive alerts even if the tab is closed or the browser is minimized.
+- **Test Modes**: Includes built-in "Instant" and "Delayed (10s)" test buttons to verify background notification delivery.
+
+### 🔐 Security & Auth
+
+- **JWT Authorization**: Secure Access and Refresh token flow.
+- **Role-based Access**: Support for USER and ADMIN dashboards.
+- **Secure Storage**: Files are served via authenticated routes to prevent unauthorized access.
 
 ---
 
-## Prerequisites
-- Node.js (recommended 18+)
-- npm (or yarn)
+## 🛠️ Project Structure
+
+- `backend/` - Node.js & Express API, Prisma ORM, Multer storage, and Web-Push logic.
+- `Frontend/` - Vite, React, Redux Toolkit, and Material UI (MUI).
 
 ---
 
-## Backend — Setup & Run
+## ⚙️ Installation Guide
 
-1. Open a terminal and install dependencies:
+### 1. Prerequisites
 
-```
+- **Node.js**: v18.0.0 or higher
+- **PostgreSQL**: A running instance (or Neon DB as used in development)
+
+### 2. Backend Setup
+
+```bash
 cd backend
 npm install
 ```
 
-2. Create a `.env` at `backend/.env` and set the environment variables used by the app. Typical variables:
+1. Create a `backend/.env` file with the following variables:
 
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/dbname?schema=public"
-JWT_SECRET=your_jwt_secret_here
-PORT=3000
-# Optional (mail):
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=you@example.com
-SMTP_PASS=yourpassword
+```env
+# Database
+DATABASE_URL="your_postgresql_url"
+DIRECT_DATABASE_URL="your_direct_postgresql_url"
+
+# Auth Secrets
+JWT_SECRET="your_secret"
+ACCESS_TOKEN="access_secret"
+REFRESH_TOKEN="refresh_secret"
+RESET_TOKEN="reset_secret"
+
+# Notifications (VAPID)
+# Generate via: npx web-push generate-vapid-keys
+VAPID_PUBLIC_KEY="your_vapid_public_key"
+VAPID_PRIVATE_KEY="your_vapid_private_key"
+
+# Email (Nodemailer)
+EMAIL_ADDRESS="your_email@gmail.com"
+EMAIL_PASSWORD="your_app_password"
 ```
 
-3. Initialize Prisma (generate client, run migrations)
+2. Initialize the Database:
 
-```
-npx prisma generate
+```bash
 npx prisma migrate dev --name init
+npx prisma generate
 ```
 
-4. (Optional) Run seed script if you have `prisma/seed.ts`:
+3. Start the Server:
 
-```
-npm run seed
-```
-
-5. Start the server
-
-- Production build and start:
-
-```
+```bash
 npm run start
 ```
 
-- Development (fast run using `tsx` which is included in devDependencies):
+### 3. Frontend Setup
 
-```
-npx tsx src/index.ts
-```
-
-By default the server listens on port `3000` (see `backend/src/index.ts`). The server ensures a `uploads/` directory exists at backend project root for storing uploaded files.
-
----
-
-## Frontend — Setup & Run
-
-1. Install dependencies:
-
-```
+```bash
 cd Frontend
 npm install
 ```
 
-2. Create a `.env` or `.env.local` in the `Frontend/` folder and set the API URL used by the frontend Vite app:
+1. Create a `Frontend/.env` file:
 
-```
-VITE_API_URL=http://localhost:3000
+```env
+VITE_API_URL="http://localhost:3000"
+VITE_VAPID_PUBLIC_KEY="your_vapid_public_key"
 ```
 
-3. Start dev server:
+2. Start the Development Server:
 
-```
+```bash
 npm run dev
 ```
 
-4. Build for production:
+---
 
-```
-npm run build
-npm run preview
-```
+## 🛣️ API Routes Summary
+
+### Authentication (`/v1/auth`)
+
+- `POST /login`: User login and token generation.
+- `POST /signup`: New account creation.
+- `POST /refresh`: Refresh session tokens.
+
+### User & Notifications (`/v1/user`)
+
+- `GET /profile`: Fetch authenticated user details.
+- `POST /save-subscription`: Register browser push subscription.
+- `POST /test-notification`: Trigger an instant OS notification.
+- `POST /test-notification-delayed`: Trigger an OS notification with a 10s delay (test background alerts).
+- `POST /notify-upload-batch`: Send an aggregated notification for multiple file uploads.
+
+### File Uploads (`/v1/upload`)
+
+- `POST /`: Upload file (Multipart).
+- `GET /file/:id`: Securely serve/download a file.
+- `DELETE /:id`: Delete a file and its disk storage.
 
 ---
 
-## API Endpoints (high level)
+## 💡 How to Handle the Project
 
-The backend mounts routes under `/v1`:
+### Testing Background Notifications
 
-- `POST /v1/upload` — upload a file (multipart/form-data) — the frontend uses this to send files with progress
-- `GET /v1/user/files-db` — list files for the authenticated user
-- `DELETE /v1/upload/:id` — delete file by id
-- `POST /v1/auth/*` — authentication endpoints (login/register/refresh)
+1. Ensure you have granted notification permissions in your browser.
+2. Click **"Test Background Alert (10s)"** in the Dashboard sidebar.
+3. **Immediately close the browser tab**.
+4. After 10 seconds, your OS will display a native alert, demonstrating the Background Push capability.
 
-Examples (cURL):
+### Handling Batch Uploads
 
-Upload a file:
-
-```
-curl -F "file=@/path/to/file.pdf" -H "Authorization: Bearer <TOKEN>" http://localhost:3000/v1/upload
-```
-
-Delete a file:
-
-```
-curl -X DELETE -H "Authorization: Bearer <TOKEN>" http://localhost:3000/v1/upload/<file-id>
-```
+The UI is optimized for bulk actions. Selecting multiple files in the "New File" dialog will trigger simultaneous uploads. Instead of seeing 10 different notifications, the system will wait for completion and show a single summary: _"Successfully uploaded 10 files"_.
 
 ---
 
-## File Upload Flow (Frontend → Backend)
+## Contributing
 
-1. User selects file(s) in the UI or drops them into the dashboard.
-2. Frontend creates `FormData` with the file and posts to `/v1/upload` using Axios `onUploadProgress` to report progress.
-3. Backend receives file via `multer`, stores on disk under `backend/uploads/<uuid>/` and creates a DB record (Prisma) linking the stored file with the user.
-4. Frontend saves the returned file metadata to its Redux store and shows success notification.
-
-See `Frontend/src/pages/Dashboard.tsx` for the implementation of the upload and progress UI.
+1. Fork the repo and create a feature branch.
+2. Add tests where appropriate and keep changes small and focused.
+3. Open a PR describing the change and the reason.
 
 ---
 
-## Database (Prisma)
+## License
 
-- Schema is in `backend/prisma/schema.prisma` and migrations are under `backend/prisma/migrations/`.
-- Typical workflow:
-
-```
-npx prisma migrate dev --name meaningful_name
-npx prisma generate
-npm run seed   # if seed script exists
-```
-
-If you use PostgreSQL, set `DATABASE_URL` accordingly; for SQLite use a file path in `DATABASE_URL`.
+MIT
 
 ---
 
-## Environment & Configuration Summary
+If you'd like, I can also:
 
-- Backend: `backend/.env` — `DATABASE_URL`, `JWT_SECRET`, `PORT`, mail settings
-- Frontend: `Frontend/.env` — `VITE_API_URL` (e.g. `http://localhost:3000`)
+- Add a sample `.env.example` for both backend and frontend.
+- Add a `Makefile` or npm scripts wrapper for common tasks.
+- Create a small Postman collection or OpenAPI spec for the API.
 
----
-
-## Troubleshooting
-
-- CORS errors: confirm backend `cors()` is enabled and `VITE_API_URL` matches backend origin.
-- DB issues: run `npx prisma migrate status` and ensure `DATABASE_URL` is reachable.
-- Uploads not found: server stores files under `backend/uploads`; confirm the folder exists and permissions allow writing.
-- Auth errors: ensure you include `Authorization: Bearer <accessToken>` header; frontend stores tokens in `localStorage`.
-
----
-
-
+File created: [README.md](README.md)
