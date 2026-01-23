@@ -46,7 +46,6 @@ export async function handleNotificationAfterLogin() {
     console.log("Waiting for service worker...");
     const registration = await navigator.serviceWorker.ready;
 
-    // Check if we already have a subscription
     const existingSubscription =
       await registration.pushManager.getSubscription();
     if (existingSubscription) {

@@ -143,27 +143,3 @@ npm run dev
 ### Handling Batch Uploads
 
 The UI is optimized for bulk actions. Selecting multiple files in the "New File" dialog will trigger simultaneous uploads. Instead of seeing 10 different notifications, the system will wait for completion and show a single summary: _"Successfully uploaded 10 files"_.
-
----
-
-## Contributing
-
-1. Fork the repo and create a feature branch.
-2. Add tests where appropriate and keep changes small and focused.
-3. Open a PR describing the change and the reason.
-
----
-
-## License
-
-MIT
-
----
-
-If you'd like, I can also:
-
-- Add a sample `.env.example` for both backend and frontend.
-- Add a `Makefile` or npm scripts wrapper for common tasks.
-- Create a small Postman collection or OpenAPI spec for the API.
-
-File created: [README.md](README.md)

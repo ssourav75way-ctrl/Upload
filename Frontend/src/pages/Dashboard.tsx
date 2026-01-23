@@ -837,7 +837,6 @@ export default function Dashboard() {
         </MenuItem>
       </Menu>
 
-      {/* Upload Progress Drawer */}
       <UploadDrawer />
     </Box>
   );
