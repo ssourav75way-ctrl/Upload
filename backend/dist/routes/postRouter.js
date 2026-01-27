@@ -5,7 +5,7 @@ import { authenticate } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/authorize.js";
 export const postRouter = express.Router();
 // Get all published posts (public)
-postRouter.get("/", async (req, res) => {
+postRouter.get("/", authenticate, async (req, res) => {
     try {
         const posts = await prisma.post.findMany({
             where: { status: PostStatus.DRAFT },
@@ -36,7 +36,7 @@ postRouter.get("/:id", async (req, res) => {
     }
 });
 // Create post (AUTHOR only)
-postRouter.post("/", authenticate, authorize(["AUTHOR"]), async (req, res) => {
+postRouter.post("/", authenticate, authorize(["AUTHOR", "ADMIN"]), async (req, res) => {
     try {
         const { title, content, status } = req.body;
         const post = await prisma.post.create({

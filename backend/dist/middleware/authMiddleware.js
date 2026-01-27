@@ -1,5 +1,4 @@
 import jwt, {} from "jsonwebtoken";
-import { prisma } from "../lib/PrismaClient.js";
 const ACCESS_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_TOKEN;
 export const generateTokens = (userId, roles) => {
@@ -32,10 +31,11 @@ export const authenticate = async (req, res, next) => {
         return res.status(401).json({ message: "No valid access or refresh token provided" });
     }
     try {
-        console.log("Verifying refresh token with secret:", process.env.REFRESH_TOKEN);
         const decoded = jwt.verify(refreshTokenHeader, REFRESH_SECRET);
         const payload = { userId: decoded.userId, roles: decoded.roles || [] };
         req.user = payload;
+        const newAccessToken = jwt.sign(payload, ACCESS_SECRET, { expiresIn: "15m" });
+        res.setHeader("access-token", newAccessToken);
         return next();
     }
     catch (error) {

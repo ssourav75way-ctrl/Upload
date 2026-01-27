@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import { prisma } from "../lib/PrismaClient.js";
 
 const ACCESS_SECRET = process.env.JWT_SECRET!;
 const REFRESH_SECRET = process.env.REFRESH_TOKEN!;
@@ -44,12 +43,14 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   }
 
   try {
-    console.log("Verifying refresh token with secret:", process.env.REFRESH_TOKEN);
+  
     const decoded = jwt.verify(refreshTokenHeader, REFRESH_SECRET) as JwtPayload;
 
     const payload = { userId: decoded.userId as string, roles: (decoded.roles as string[]) || [] };
     req.user = payload;
-
+    
+    const newAccessToken = jwt.sign(payload, ACCESS_SECRET, { expiresIn: "15m" });
+    res.setHeader("access-token", newAccessToken);
     return next();
   } catch (error) {
     return res.status(401).json({ message: "Invalid refresh token" });
