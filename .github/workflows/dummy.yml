@@ -1,0 +1,19 @@
+name: Dummy Workflow
+
+on:
+  workflow_dispatch:   # allows manual trigger
+  push:                # optional: triggers on push
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Print message
+        run: echo "Dummy workflow executed"
+
+      - name: Sleep (for testing)
+        run: sleep 10
