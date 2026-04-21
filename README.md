@@ -18,7 +18,7 @@ The standout feature of this project is its **OS-Level Push Notification System*
 
 - **Native OS Alerts**: Uses Web Push API and Service Workers to trigger native Mac/Windows notifications.
 - **Background Support**: Receive alerts even if the tab is closed or the browser is minimized.
-- **Test Modes**: Includes built-in "Instant" and "Delayed (10s)" test buttons to verify background notification delivery.
+- 
 
 ### Security & Auth
 
@@ -131,7 +131,7 @@ npm run dev
 
 ---
 
-## 💡 How to Handle the Project
+##  How to Handle the Project
 
 ### Testing Background Notifications
 
@@ -143,3 +143,5 @@ npm run dev
 ### Handling Batch Uploads
 
 The UI is optimized for bulk actions. Selecting multiple files in the "New File" dialog will trigger simultaneous uploads. Instead of seeing 10 different notifications, the system will wait for completion and show a single summary: _"Successfully uploaded 10 files"_.
+
+
