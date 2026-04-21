@@ -142,4 +142,4 @@ npm run dev
 
 ### Handling Batch Uploads
 
-The UI is optimized for bulk actions. Selecting multiple files in the "New File" dialog will trigger simultaneous uploads. Instead of seeing 10 different notifications, the system will wait for completion and show a single summary: _"Successfully uploaded 10 files"_.
+The UI is optimized for bulk actions. Selecting multiple files in the "New File" dialog will trigger simultaneous uploads. Instead of seeing 10 different notifications, the system will wait for completion and show a single summary: _"Successfully uploaded 11 files"_.
