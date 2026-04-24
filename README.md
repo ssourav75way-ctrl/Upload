@@ -129,10 +129,6 @@ npm run dev
 - `GET /file/:id`: Securely serve/download a file.
 - `DELETE /:id`: Delete a file and its disk storage.
 
----
-
-##  How to Handle the Project
-
 
 
 ### Testing Background Notifications
