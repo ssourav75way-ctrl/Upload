@@ -14,14 +14,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Ensure uploads folder exists at project root (backend/uploads)
 const uploadsDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Files are served via protected routes in `uploadRouter` to enforce ownership.
-// Note: we keep the `uploads` directory on disk but do NOT expose it statically.
 
 app.use("/v1/auth", authRouter);
 app.use("/v1/user", userRouter);
