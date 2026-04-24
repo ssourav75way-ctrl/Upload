@@ -20,8 +20,6 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Files are served via protected routes in `uploadRouter` to enforce ownership.
-// Note: we keep the `uploads` directory on disk but do NOT expose it statically.
 
 app.use("/v1/auth", authRouter);
 app.use("/v1/user", userRouter);
