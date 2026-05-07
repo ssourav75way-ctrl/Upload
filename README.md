@@ -2,7 +2,7 @@
 
 **CloudDrive** is a high-performance full-stack application designed for seamless file storage and real-time management. It features a robust TypeScript Node/Express backend powered by Prisma and a modern, reactive Vite + React frontend.
 
-The standout feature of this project is its **OS-Level Push Notification System**, which delivers background alerts and summarize batch actions (like multiple file uploads) into single, clean system notifications even when the browser tab is closed.
+The standout feature of this project is its **OS-Level Push Notification System**, which delivers background alerts and summarize batch actions (like multiple file uploads) into single, clean system notifications even when the browser tab is closed. Nice to use 
 
 ---
 
@@ -129,7 +129,6 @@ npm run dev
 - `GET /file/:id`: Securely serve/download a file.
 - `DELETE /:id`: Delete a file and its disk storage.
 
----
 
 ##  How to Handle the Project
 
