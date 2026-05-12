@@ -139,8 +139,3 @@ npm run dev
 3. **Immediately close the browser tab**.
 4. After 10 seconds, your OS will display a native alert, demonstrating the Background Push capability.
 
-### Handling Batch Uploads
-
-The UI is optimized for bulk actions. Selecting multiple files in the "New File" dialog will trigger simultaneous uploads. Instead of seeing 10 different notifications, the system will wait for completion and show a single summary: _"Successfully uploaded 10 files"_.
-
-
