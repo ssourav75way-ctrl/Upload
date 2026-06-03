@@ -1,8 +1,8 @@
 name: Dummy Workflow
 
 on:
-  workflow_dispatch:   # allows manual trigger
-  push:                # optional: triggers on push
+  workflow_dispatch:
+  push:
 
 jobs:
   test-job:
@@ -12,8 +12,23 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Print message
-        run: echo "Dummy workflow executed"
+      - name: Step 1
+        run: |
+          echo "Starting workflow..."
+          sleep 10
+          echo "Step 1 complete"
 
-      - name: Sleep (for testing)
-        run: sleep 10
+      - name: Step 2
+        run: |
+          echo "Running tests..."
+          sleep 10
+          echo "Tests complete"
+
+      - name: Step 3
+        run: |
+          echo "Deploy simulation..."
+          sleep 10
+          echo "Deployment complete"
+
+      - name: Final Step
+        run: echo "Workflow finished"
