@@ -35,14 +35,14 @@ export default function UploadDrawer() {
       return;
     }
 
-    // If any upload is still in progress, ensure drawer is visible
+   
     const uploading = uploads.some((u) => u.status === "uploading");
     if (uploading) {
       setVisible(true);
       return;
     }
 
-    // All uploads completed or errored; auto-hide after short delay and clear completed
+    
     const timer = setTimeout(() => {
       dispatch(clearCompletedUploads());
       setVisible(false);
@@ -179,4 +179,7 @@ export default function UploadDrawer() {
       </Collapse>
     </Paper>
   );
+
+
+  // something to abb
 }
