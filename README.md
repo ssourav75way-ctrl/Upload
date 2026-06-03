@@ -125,7 +125,6 @@ npm run dev
 - `DELETE /:id`: Delete a file and its disk storage.
 
 
-##  How to Handle the Project
 
 ### Testing Background Notifications
 
