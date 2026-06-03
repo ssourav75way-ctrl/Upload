@@ -8,11 +8,6 @@ The standout feature of this project is its **OS-Level Push Notification System*
 
 ##  Key Features
 
-###  File Management
-
-- **Multipart Uploads**: Individual and batch file uploads with real-time progress tracking.
-- **Ownership Tracking**: Files are stored on disk and strictly mapped to users via Prisma.
-- **Summary Notifications**: Intelligently aggregates multiple file uploads into a single OS notification.
 
 ###  Real-time Notifications (OS-Level)
 
