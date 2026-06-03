@@ -33,16 +33,6 @@ The standout feature of this project is its **OS-Level Push Notification System*
 - `backend/` - Node.js & Express API, Prisma ORM, Multer storage, and Web-Push logic.
 - `Frontend/` - Vite, React, Redux Toolkit, and Material UI (MUI).
 
----
-
-## ⚙️ Installation Guide
-
-### 1. Prerequisites
-
-- **Node.js**: v18.0.0 or higher
-- **PostgreSQL**: A running instance (or Neon DB as used in development)
-
-### 2. Backend Setup
 
 ```bash
 cd backend
