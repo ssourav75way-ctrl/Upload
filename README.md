@@ -6,42 +6,7 @@ The standout feature of this project is its **OS-Level Push Notification System*
 
 ---
 
-##  Key Features
-
-###  File Management
-
-- **Multipart Uploads**: Individual and batch file uploads with real-time progress tracking.
-- **Ownership Tracking**: Files are stored on disk and strictly mapped to users via Prisma.
-- **Summary Notifications**: Intelligently aggregates multiple file uploads into a single OS notification.
-
-###  Real-time Notifications (OS-Level)
-
-- **Native OS Alerts**: Uses Web Push API and Service Workers to trigger native Mac/Windows notifications.
-- **Background Support**: Receive alerts even if the tab is closed or the browser is minimized.
-- 
-
-### Security & Auth
-
-- **JWT Authorization**: Secure Access and Refresh token flow.
-- **Role-based Access**: Support for USER and ADMIN dashboards.
-- **Secure Storage**: Files are served via authenticated routes to prevent unauthorized access.
-
----
-
-## 🛠️ Project Structure
-
-- `backend/` - Node.js & Express API, Prisma ORM, Multer storage, and Web-Push logic.
-- `Frontend/` - Vite, React, Redux Toolkit, and Material UI (MUI).
-
----
-
-## ⚙️ Installation Guide
-
-### 1. Prerequisites
-
-- **Node.js**: v18.0.0 or higher
-- **PostgreSQL**: A running instance (or Neon DB as used in development)
-
+##  Ke
 ### 2. Backend Setup
 
 ```bash
