@@ -4,30 +4,6 @@
 
 The standout feature of this project is its **OS-Level Push Notification System**, which delivers background alerts and summarize batch actions (like multiple file uploads) into single, clean system notifications even when the browser tab is closed. Nice to use 
 
----
-
-##  Key Features
-
-
-
-### 1. Prerequisites
-
-- **Node.js**: v18.0.0 or higher
-- **PostgreSQL**: A running instance (or Neon DB as used in development)
-
-### 2. Backend Setup
-
-```bash
-cd backend
-npm install
-```
-
-1. Create a `backend/.env` file with the following variables:
-
-```env
-# Database
-DATABASE_URL="your_postgresql_url"
-DIRECT_DATABASE_URL="your_direct_postgresql_url"
 
 # Auth Secrets
 JWT_SECRET="your_secret"
