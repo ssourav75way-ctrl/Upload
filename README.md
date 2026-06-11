@@ -105,6 +105,8 @@ npm run dev
 
 ##  How to Handle the Project
 
+
+
 ### Testing Background Notifications
 
 1. Ensure you have granted notification permissions in your browser.
