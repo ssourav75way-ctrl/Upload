@@ -9,6 +9,28 @@ The standout feature of this project is its **OS-Level Push Notification System*
 ##  Key Features
 
 
+###  Real-time Notifications (OS-Level)
+
+- **Native OS Alerts**: Uses Web Push API and Service Workers to trigger native Mac/Windows notifications.
+- **Background Support**: Receive alerts even if the tab is closed or the browser is minimized.
+- 
+
+### Security & Auth
+
+- **JWT Authorization**: Secure Access and Refresh token flow.
+- **Role-based Access**: Support for USER and ADMIN dashboards.
+- **Secure Storage**: Files are served via authenticated routes to prevent unauthorized access.
+
+---
+
+## 🛠️ Project Structure
+
+- `backend/` - Node.js & Express API, Prisma ORM, Multer storage, and Web-Push logic.
+- `Frontend/` - Vite, React, Redux Toolkit, and Material UI (MUI).
+
+---
+
+## ⚙️ Installation Guide
 
 ### 1. Prerequisites
 
@@ -103,7 +125,6 @@ npm run dev
 - `DELETE /:id`: Delete a file and its disk storage.
 
 
-##  How to Handle the Project
 
 ### Testing Background Notifications
 
