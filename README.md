@@ -1,50 +1,5 @@
 # CloudDrive - Full-Stack File Management with OS Push Notifications
-
-**CloudDrive** is a high-performance full-stack application designed for seamless file storage and real-time management. It features a robust TypeScript Node/Express backend powered by Prisma and a modern, reactive Vite + React frontend.
-
-The standout feature of this project is its **OS-Level Push Notification System**, which delivers background alerts and summarize batch actions (like multiple file uploads) into single, clean system notifications even when the browser tab is closed. Nice to use 
-
----
-
-##  Key Features
-
-
-###  Real-time Notifications (OS-Level)
-
-- **Native OS Alerts**: Uses Web Push API and Service Workers to trigger native Mac/Windows notifications.
-- **Background Support**: Receive alerts even if the tab is closed or the browser is minimized.
-- 
-
-### Security & Auth
-
-- **JWT Authorization**: Secure Access and Refresh token flow.
-- **Role-based Access**: Support for USER and ADMIN dashboards.
-- **Secure Storage**: Files are served via authenticated routes to prevent unauthorized access.
-
----
-
-## 🛠️ Project Structure
-
-- `backend/` - Node.js & Express API, Prisma ORM, Multer storage, and Web-Push logic.
-- `Frontend/` - Vite, React, Redux Toolkit, and Material UI (MUI).
-
----
-
-## ⚙️ Installation Guide
-
-### 1. Prerequisites
-
-- **Node.js**: v18.0.0 or higher
-- **PostgreSQL**: A running instance (or Neon DB as used in development)
-
-### 2. Backend Setup
-
-```bash
-cd backend
-npm install
-```
-
-1. Create a `backend/.env` file with the following variables:
+owing variables:
 
 ```env
 # Database
@@ -132,9 +87,4 @@ npm run dev
 2. Click **"Test Background Alert (10s)"** in the Dashboard sidebar.
 3. **Immediately close the browser tab**.
 4. After 10 seconds, your OS will display a native alert, demonstrating the Background Push capability.
-
-### Handling Batch Uploads
-
-The UI is optimized for bulk actions. Selecting multiple files in the "New File" dialog will trigger simultaneous uploads. Instead of seeing 10 different notifications, the system will wait for completion and show a single summary: _"Successfully uploaded 10 files"_.
-
 
