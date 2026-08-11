@@ -20,9 +20,9 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   let accessToken: string | undefined;
   if (typeof rawAuthHeader === "string") {
     if (rawAuthHeader.startsWith("Bearer ")) {
-      accessToken = rawAuthHeader.slice(7); // Remove "Bearer " prefix
+      accessToken = rawAuthHeader.slice(7); 
     } else if (rawAuthHeader.trim()) {
-      accessToken = rawAuthHeader.trim(); // Raw token without Bearer
+      accessToken = rawAuthHeader.trim(); 
     }
   }
 

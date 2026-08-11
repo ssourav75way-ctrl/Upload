@@ -6,7 +6,6 @@ Welcome to the **Blog Platform Frontend**! This is a modern, high-performance we
 
 ### Secure Authentication
 
-- **User Registration & Login**: Smooth onboarding flow with real-time validation.
 - **Password Recovery**: Integrated "Forgot Password" workflow to ensure users never lose access.
 - **JWT-Based Security**: Secure session management using JSON Web Tokens.
 
@@ -18,8 +17,7 @@ Welcome to the **Blog Platform Frontend**! This is a modern, high-performance we
 
 ### State & Data Management
 
-- **Redux Toolkit**: Centralized state management for authentication and user preferences.
-- **Axios Integration**: A pre-configured API service layer for efficient communication with the backend.
+
 - **React Hook Form**: Performant form handling with robust validation.
 
 ### Modern UI/UX
@@ -75,26 +73,12 @@ src/
 
 2. **Install dependencies:**
 
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables:**
-   Create a `.env` file in the root directory and add your API base URL:
-
-   ```env
-   VITE_API_BASE_URL=https://your-api-url.com
-   ```
+   
 
 4. **Run the development server:**
 
    ```bash
    npm run dev
-   ```
-
-5. **Build for production:**
-   ```bash
-   npm run build
    ```
 
 ---
