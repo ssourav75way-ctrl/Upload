@@ -14,6 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Ensure uploads folder exists at project root (backend/uploads)
 const uploadsDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
